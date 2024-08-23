@@ -6,7 +6,7 @@ class chatGPT():
     def __init__(self) -> None:
         self.client = get_openai_api_client()
 
-    def make_request(self, input_text:str):
+    def make_request(self, input_text:str, current_code:str) -> str:
         completion = self.client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -16,7 +16,7 @@ class chatGPT():
                 },
                 {
                     "role": "user", 
-                    "content": f"I need you to make the specified changes:{input_text}\nApply this on the current code"
+                    "content": f"I need you to make the specified changes:{input_text}\nApply this on the current code{current_code}"
                 }
             ]
         )
