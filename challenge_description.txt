@@ -1,0 +1,9 @@
+Step 1
+HTML elements have an opening and closing tag with content in between.
+Here is the basic syntax:
+Example Code
+<openingTag>content</closingTag>
+The first element you will learn about is the h1 element. The h1 element is a heading element and is used for the main heading of a webpage.
+Example Code
+<h1>This is a main heading</h1>
+Change the text of the h1 element below from Hello World to and watch the change in the browser preview.
