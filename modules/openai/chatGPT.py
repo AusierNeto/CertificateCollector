@@ -22,21 +22,21 @@ class chatGPT():
         )
         return completion.choices[0].message.content
 
-    def stream_response(self, input_text):
-        stream = self.client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {
-                    "role": "system", 
-                    "content": SYSTEM_ROLE
-                },
-                {
-                    "role": "user", 
-                    "content": f"{input_text}"
-                }
-            ],
-            stream=True
-        )
-        for chunk in stream:
-            if chunk.choices[0].delta.content is not None:
-                print(chunk.choices[0].delta.content, end="")
+    # def stream_response(self, input_text):
+    #     stream = self.client.chat.completions.create(
+    #         model="gpt-4o-mini",
+    #         messages=[
+    #             {
+    #                 "role": "system", 
+    #                 "content": SYSTEM_ROLE
+    #             },
+    #             {
+    #                 "role": "user", 
+    #                 "content": f"{input_text}"
+    #             }
+    #         ],
+    #         stream=True
+    #     )
+    #     for chunk in stream:
+    #         if chunk.choices[0].delta.content is not None:
+    #             print(chunk.choices[0].delta.content, end="")

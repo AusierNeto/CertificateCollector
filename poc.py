@@ -6,7 +6,7 @@ import pyperclip
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from modules.openai.chatGPT import chatGPT
-from utils.constants import URL
+from utils.constants import CHALLENGE_DESCRIPTION_CLASS, URL, VIEW_LINE_CLASS
 
 
 class POC():
@@ -41,9 +41,9 @@ class POC():
         start_coding_button.click()
 
     def get_challenge_description(self):
-        time.sleep(3)
-        challenge_description_class = 'description-container'
-        challenge_description = self.driver.find_element(By.CLASS_NAME, challenge_description_class)
+        time.sleep(6)
+        
+        challenge_description = self.driver.find_element(By.CLASS_NAME, CHALLENGE_DESCRIPTION_CLASS)
         
         self.prompt = challenge_description.text
 
@@ -51,24 +51,36 @@ class POC():
             f.write(challenge_description.text)
 
     def get_current_code_state(self):
-        time.sleep(3)
-        VIEW_LINE_CLASS = 'view-line'
-        element = self.driver.find_element(By.CLASS_NAME, VIEW_LINE_CLASS)
-        element.click()
-        pyautogui.hotkey('ctrl', 'a')
+        time.sleep(5)
+        
+        view_line_elements = self.driver.find_elements(By.CLASS_NAME, VIEW_LINE_CLASS)
+        
+        for e in view_line_elements:
+            try:
+                e.click()
+            except:
+                print("Skipped Element")
+        
+        pyautogui.hotkey('ctrl', 'a') 
         pyautogui.hotkey('ctrl', 'c')
 
     def get_chatgpt_response(self):
         # Pegar o conteúdo do clipboard
         current_code_state = pyperclip.paste()
+        print(current_code_state)
 
         with open('current_code_state.txt', 'w+') as f:
-            f.write(current_code_state)
+            f.write(rf"{current_code_state}")
 
         self.response = self.chatGPT.make_request(self.prompt, current_code_state)
 
+        with open("chat_gpt_response.txt", "w+") as f:
+            f.write(rf"{self.response}")
+
     def submit_challenge(self):
         pyautogui.write(self.response)
+        pyautogui.hotkey('ctrl', 'enter')
+        time.sleep(1)
         pyautogui.hotkey('ctrl', 'enter')
 
     def action(self):
@@ -76,13 +88,12 @@ class POC():
         self.select_course()
         self.select_course_section()
         self.click_start_coding_button()
-        self.get_challenge_description()
-        self.get_current_code_state()
-        self.get_chatgpt_response()
-        self.submit_challenge()
-        input()
-        # self.get_chatgpt_response()
-        # self.select_all_editor_text_and_write_response()
+        for _ in range(10):
+            self.get_challenge_description()
+            self.get_current_code_state()
+            self.get_chatgpt_response()
+            self.submit_challenge()
+            time.sleep(5)
 
 
 if __name__ == '__main__':
