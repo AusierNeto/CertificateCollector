@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 from modules.openai.chatGPT import chatGPT
 from utils.constants import CHALLENGE_DESCRIPTION_CLASS, URL, VIEW_LINE_CLASS
+from utils.files import read_file_lines, save_as_text_file
 
 
 class POC():
@@ -50,7 +51,7 @@ class POC():
         with open("challenge_description.txt", 'w+') as f:
             f.write(challenge_description.text)
 
-    def get_current_code_state(self):
+    def set_current_code_state(self):
         time.sleep(5)
         
         view_line_elements = self.driver.find_elements(By.CLASS_NAME, VIEW_LINE_CLASS)
@@ -63,22 +64,22 @@ class POC():
         
         pyautogui.hotkey('ctrl', 'a') 
         pyautogui.hotkey('ctrl', 'c')
+        self.current_code_state = pyperclip.paste()
+
+        pyautogui.press("backspace") # Clean all the text in the code editor
 
     def get_chatgpt_response(self):
-        # Pegar o conteúdo do clipboard
-        current_code_state = pyperclip.paste()
-        print(current_code_state)
+        save_as_text_file(text_string=self.current_code_state, filename="current_code_state.txt")
 
-        with open('current_code_state.txt', 'w+') as f:
-            f.write(rf"{current_code_state}")
+        self.response = self.chatGPT.make_request(self.prompt, self.current_code_state)
 
-        self.response = self.chatGPT.make_request(self.prompt, current_code_state)
-
-        with open("chat_gpt_response.txt", "w+") as f:
-            f.write(rf"{self.response}")
+        save_as_text_file(text_string=self.response, filename="chat_gpt_response.txt")
 
     def submit_challenge(self):
-        pyautogui.write(self.response)
+        lines = read_file_lines("chat_gpt_response.txt")
+        for line in lines:
+            pyautogui.press("home")
+            pyautogui.write(line)
         pyautogui.hotkey('ctrl', 'enter')
         time.sleep(1)
         pyautogui.hotkey('ctrl', 'enter')
@@ -90,10 +91,10 @@ class POC():
         self.click_start_coding_button()
         for _ in range(10):
             self.get_challenge_description()
-            self.get_current_code_state()
+            self.set_current_code_state()
             self.get_chatgpt_response()
             self.submit_challenge()
-            time.sleep(5)
+            time.sleep(2)
 
 
 if __name__ == '__main__':
