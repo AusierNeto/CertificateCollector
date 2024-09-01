@@ -4,6 +4,8 @@ URL = 'https://www.freecodecamp.org/learn/'
 
 VIEW_LINE_CLASS = 'view-line'
 CHALLENGE_DESCRIPTION_CLASS = 'description-container'
+COURSE_CLASS = "map-superblock-link"
+START_CODING_BUTTON_XPATH = '//*[@id="headlessui-dialog-panel-2"]/div[3]/button'
 
 # Openai Constants
 
@@ -11,4 +13,4 @@ SYSTEM_ROLE = "You are a skilled programmer, specialized in solving problems by 
 
 # Paths
 
-TEXT_FILES_PATH = "text_files/"
+TEXT_FILES_PATH = "text_files/";
